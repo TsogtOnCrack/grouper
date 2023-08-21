@@ -9,6 +9,10 @@ import { tsogtAlgorithm } from "./utils/tsogtAlgorith";
 import { greedyAlgorithm } from "./utils/greedyAlgorithm";
 import { Error } from "./components/Error";
 
+//
+//
+//
+
 const DATA = [
   { name: "Tsogt", skill: 42, team: -1 },
   { name: "Tsogt2", skill: 69, team: -1 },
@@ -18,6 +22,10 @@ const DATA = [
   { name: "Tsogt6", skill: 69, team: -1 },
 ];
 const INITIAL_TEAM_COUNT = 4;
+
+//
+//
+//
 
 function App() {
   const [userData, setUserData] = useState([]);
@@ -51,8 +59,8 @@ function App() {
     return arr;
   };
   const applyAlgorithmToTeams = (type, count, list, override = false) => {
-    if(override){
-      return
+    if (override) {
+      return;
     }
     if (!groupActive) {
       return;
@@ -67,22 +75,21 @@ function App() {
     }
 
     const newTeamDataList = [...teamData.list];
-    const newUserData = [...userData]
+    const newUserData = [...userData];
 
     groupedList.map((el, i) => {
       newTeamDataList[i] = { id: i + 1, members: el };
 
       //update the users
-      el.map((e)=>{
-        const target = newUserData.find((a)=> a.name == e)
-        target.team = i+1
-      })
+      el.map((e) => {
+        const target = newUserData.find((a) => a.name == e);
+        target.team = i + 1;
+      });
     });
 
-    if (groupActive){
-      setUserData(newUserData)
+    if (groupActive) {
+      setUserData(newUserData);
     }
-    
 
     setTeamData({
       count: teamData.count,
@@ -105,7 +112,7 @@ function App() {
       console.log("ERROR: empty data");
     }
 
-    if (teamData.list) {
+    if (teamData.list && groupActive) {
       applyAlgorithmToTeams(groupType, teamData.count, userData);
     }
   }, [userData]);
@@ -181,7 +188,7 @@ function App() {
 
     for (let i = 1; i < newTeamArangement.length + 1; i++) {
       if (teamId === i) {
-        newTeamArangement[i-1].members.push(personId);
+        newTeamArangement[i - 1].members.push(personId);
       }
     }
 
