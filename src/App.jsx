@@ -20,8 +20,16 @@ const DATA = [
   { name: "Tsogt4", skill: 42, team: -1 },
   { name: "Tsogt5", skill: 69, team: -1 },
   { name: "Tsogt6", skill: 69, team: -1 },
+  { name: "Tsogt12", skill: 42, team: -1 },
+  { name: "Tsogt13", skill: 69, team: -1 },
+  { name: "Tsogt14", skill: 42, team: -1 },
+  { name: "Tsogt15", skill: 42, team: -1 },
+  { name: "Tsogt16", skill: 69, team: -1 },
+  { name: "Tsogt17", skill: 69, team: -1 },
 ];
 const INITIAL_TEAM_COUNT = 4;
+
+const INITIAL_TITLE = "Grouper"
 
 //
 //
@@ -49,6 +57,8 @@ function App() {
     localStorage.setItem("GROUP_ACTIVE", JSON.stringify(false));
     localStorage.setItem("GROUP_TYPE", "Tsogt");
 
+    localStorage.setItem("TITLE", INITIAL_TITLE)
+
     window.location.reload(false);
   };
   const makeEmptyTeam = (groupCount) => {
@@ -57,6 +67,18 @@ function App() {
       arr.push({ id: i + 1, members: [] });
     }
     return arr;
+  };
+  const clearTeamStatus = (c) => {
+    const newPeople = [...userData];
+    newPeople.map((person) => {
+      person.team = -1;
+    });
+    setUserData(newPeople);
+
+    setTeamData({
+      count: c,
+      list: makeEmptyTeam(c),
+    });
   };
   const applyAlgorithmToTeams = (type, count, list, override = false) => {
     if (override) {
@@ -87,15 +109,21 @@ function App() {
       });
     });
 
-    if (groupActive) {
-      setUserData(newUserData);
-    }
-
     setTeamData({
       count: teamData.count,
       list: newTeamDataList,
     });
   };
+  // const getCountOfPeopleFromTeam = (data) => {
+  //   let sum = 0;
+  //   const newData = [...data.list];
+  //   newData.map((el) => {
+  //     el.members.map((e) => {
+  //       sum++;
+  //     });
+  //   });
+  //   return sum;
+  // };
 
   useEffect(() => {
     // initializeData()
@@ -103,6 +131,7 @@ function App() {
     setTeamData(JSON.parse(localStorage.getItem("TEAM_DATA")));
     setGroupActive(JSON.parse(localStorage.getItem("GROUP_ACTIVE")));
     setGroupType(localStorage.getItem("GROUP_TYPE"));
+    document.title = localStorage.getItem("TITLE")
   }, []);
 
   useEffect(() => {
@@ -157,6 +186,10 @@ function App() {
     setGroupType(response);
   };
   const handleSet = (response) => {
+    if (response === teamData.count) {
+      return;
+    }
+
     if (Number(response) > userData.length) {
       setError(
         `Too many teams! You don't have enough people to go into your teams. The maximum ammount of teams you can have is: ${userData.length}`
@@ -180,6 +213,10 @@ function App() {
       count: response,
       list: makeEmptyTeam(response),
     });
+
+    if(!groupActive){
+      clearTeamStatus(response);
+    }
   };
   const handleTeamSwitch = (teamId, personId) => {
     setGroupActive(false);
@@ -274,6 +311,7 @@ function App() {
           </div>
 
           <div className="flex flex-col border-[2px] border-black w-fit p-12 m-12 rounded-lg h-[75vh] overflow-y-scroll">
+            <p className=" my-2">Total: {userData.length}</p>
             {userData.map((el, i) => {
               return (
                 <Person
@@ -298,6 +336,15 @@ function App() {
                 {teamData.count}
               </p>
             </div>
+
+            <div className="flex flex-row">
+              <input placeholder="Edit Tile" type="text" id ="InputForChangingTitle" className="pl-2 rounded-md" />
+              <div onClick = {()=>{
+                document.title = (document.getElementById("InputForChangingTitle").value)
+                localStorage.setItem("TITLE", document.title)
+              }} className="rounded-md mx-1 bg-green-500 px-2 py-1 h-full flex justify-center items-center text-[14px]">SET</div>
+            </div>
+
             <button
               className="text-[14px] bg-red-500 hover:bg-red-600 duration-300  py-1 px-2 text-white rounded-md"
               onClick={() => {
