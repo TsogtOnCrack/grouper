@@ -7,26 +7,27 @@ import { Switch } from "./components/Switch";
 import { NumberInput } from "./components/NumberInput";
 import { tsogtAlgorithm } from "./utils/tsogtAlgorith";
 import { greedyAlgorithm } from "./utils/greedyAlgorithm";
+import { greedyWithGender } from "./utils/greedyWithGender";
 import { Error } from "./components/Error";
 
 //
 //
 //
 
-const DATA = [
-  { name: "Tsogt", skill: 42, team: -1 },
-  { name: "Tsogt2", skill: 69, team: -1 },
-  { name: "Tsogt3", skill: 42, team: -1 },
-  { name: "Tsogt4", skill: 42, team: -1 },
-  { name: "Tsogt5", skill: 69, team: -1 },
-  { name: "Tsogt6", skill: 69, team: -1 },
-  { name: "Tsogt12", skill: 42, team: -1 },
-  { name: "Tsogt13", skill: 69, team: -1 },
-  { name: "Tsogt14", skill: 42, team: -1 },
-  { name: "Tsogt15", skill: 42, team: -1 },
-  { name: "Tsogt16", skill: 69, team: -1 },
-  { name: "Tsogt17", skill: 69, team: -1 },
-];
+  const DATA = [
+    { name: "Tsogt", skill: 42, team: -1, gender:"F" },
+    { name: "Tsogt2", skill: 69, team: -1, gender:"M" },
+    { name: "Tsogt3", skill: 42, team: -1, gender:"F" },
+    { name: "Tsogt4", skill: 42, team: -1, gender:"F" },
+    { name: "Tsogt5", skill: 69, team: -1, gender:"F" },
+    { name: "Tsogt6", skill: 69, team: -1, gender:"M" },
+    { name: "Tsogt12", skill: 42, team: -1, gender:"F" },
+    { name: "Tsogt13", skill: 69, team: -1, gender:"M" },
+    { name: "Tsogt14", skill: 42, team: -1, gender:"F" },
+    { name: "Tsogt15", skill: 42, team: -1, gender:"M" },
+    { name: "Tsogt16", skill: 69, team: -1, gender:"F" },
+    { name: "Tsogt17", skill: 69, team: -1, gender:"F" },
+  ];
 const INITIAL_TEAM_COUNT = 4;
 
 const INITIAL_TITLE = "Grouper"
@@ -91,6 +92,9 @@ function App() {
     let groupedList = [];
     if (type === "Greedy") {
       groupedList = greedyAlgorithm(count, list);
+    }
+    if (type === "Gender") {
+      groupedList = greedyWithGender(count, list);
     }
     if (type === "Tsogt") {
       groupedList = tsogtAlgorithm(count, list);
@@ -219,6 +223,9 @@ function App() {
     }
   };
   const handleTeamSwitch = (teamId, personId) => {
+    if(teamId === "none"){
+      return
+    }
     setGroupActive(false);
 
     const newTeamArangement = [...teamData.list];
@@ -264,6 +271,32 @@ function App() {
 
     setUserData(newChangedUserData);
   };
+  const handleUpdateToGender = (currentGender, personId) =>{
+
+    const newPersonData = [...userData]
+    const targetPerson = newPersonData.find((a)=> a.name === personId)
+
+    if(currentGender == "F"){
+      targetPerson.gender = "M"
+    }
+    if(currentGender == "M"){
+      targetPerson.gender = "F"
+    } 
+
+    console.log("Just set", personId, "from", currentGender, "to", targetPerson.gender)
+
+    setUserData(newPersonData)
+
+  }
+  const handleUpdateToName = (event, personId) => {
+
+    const newPersonData = [...userData]
+    const targetPerson = newPersonData.find((a)=> a.name === personId)
+
+    targetPerson.name = event.target.value
+    setUserData(newPersonData)
+  }
+
 
   return (
     <div className="flex flex-col w-screen h-screen bg-slate-100 overflow-clip">
@@ -319,6 +352,9 @@ function App() {
                   data={el}
                   handleChange={handleSliderChange}
                   handleChangeTeam={handleTeamSwitch}
+                  handleGengerChange={handleUpdateToGender}
+                  handleNameChange={handleUpdateToName}
+                  active = {groupActive}
                 />
               );
             })}
@@ -342,7 +378,7 @@ function App() {
               <div onClick = {()=>{
                 document.title = (document.getElementById("InputForChangingTitle").value)
                 localStorage.setItem("TITLE", document.title)
-              }} className="rounded-md mx-1 bg-green-500 px-2 py-1 h-full flex justify-center items-center text-[14px]">SET</div>
+              }} className="rounded-md cursor-pointer hover:bg-green-400 duration-300 mx-1 bg-green-500 px-2 py-1 h-full flex justify-center items-center text-[14px]">SET</div>
             </div>
 
             <button

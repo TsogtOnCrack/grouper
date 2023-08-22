@@ -8,7 +8,7 @@ export const Switch = ({ handleChange, initialValue }) => {
   }, [switchState]);
 
   return (
-    <div className="flex flex-row items-center justify-between w-[60px] border-[2px] border-black rounded-md px-2 py-1 cursor-pointer">
+    <div className="flex flex-row items-center justify-between w-[90px] border-[2px] border-black rounded-md px-2 py-1 cursor-pointer">
       <div
         className="z-20"
         onClick={() => {
@@ -26,8 +26,16 @@ export const Switch = ({ handleChange, initialValue }) => {
         Gr
       </div>
       <div
+        className="z-20"
+        onClick={() => {
+          setSwitchState("Gender");
+        }}
+      >
+        Ge
+      </div>
+      <div
         className={`w-[25px] h-[22px] bg-blue-500 rounded-md absolute duration-300 ${
-          switchState === "Tsogt" ? "-ml-[4px]" : " ml-[19px]"
+          switchState === "Tsogt" ? "-ml-[4px]" : switchState == "Greedy"? " ml-[21px]" : "ml-[48px]"
         }`}
       ></div>
     </div>
