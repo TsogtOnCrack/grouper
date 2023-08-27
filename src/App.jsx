@@ -1,5 +1,4 @@
-import logo from "./logo.svg";
-import { Slider } from "@mui/material";
+// import { Slider } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Person } from "./components/Person";
 import { Team } from "./components/Team";
@@ -8,29 +7,36 @@ import { NumberInput } from "./components/NumberInput";
 import { tsogtAlgorithm } from "./utils/tsogtAlgorith";
 import { greedyAlgorithm } from "./utils/greedyAlgorithm";
 import { greedyWithGender } from "./utils/greedyWithGender";
+import logo from "./logo.svg";
 import { Error } from "./components/Error";
+import {
+  Card,
+  Button,
+  Text,
+  Title,
+  Group,
+  Grid,
+  Badge,
+  Slider,
+} from "@mantine/core";
+import { People } from "./components/People";
+import { Configurations } from "./components/Configurations";
+import { useHover } from "@mantine/hooks";
 
 //
 //
 //
 
-  const DATA = [
-    { name: "Tsogt", skill: 42, team: -1, gender:"F" },
-    { name: "Tsogt2", skill: 69, team: -1, gender:"M" },
-    { name: "Tsogt3", skill: 42, team: -1, gender:"F" },
-    { name: "Tsogt4", skill: 42, team: -1, gender:"F" },
-    { name: "Tsogt5", skill: 69, team: -1, gender:"F" },
-    { name: "Tsogt6", skill: 69, team: -1, gender:"M" },
-    { name: "Tsogt12", skill: 42, team: -1, gender:"F" },
-    { name: "Tsogt13", skill: 69, team: -1, gender:"M" },
-    { name: "Tsogt14", skill: 42, team: -1, gender:"F" },
-    { name: "Tsogt15", skill: 42, team: -1, gender:"M" },
-    { name: "Tsogt16", skill: 69, team: -1, gender:"F" },
-    { name: "Tsogt17", skill: 69, team: -1, gender:"F" },
-  ];
+const DATA = [
+  { name: "Tsogt", skill: 42, team: -1, gender: "F" },
+  { name: "Tsogt2", skill: 69, team: -1, gender: "M" },
+  { name: "Tsogt3", skill: 42, team: -1, gender: "F" },
+  { name: "Tsogt4", skill: 42, team: -1, gender: "F" },
+  
+];
 const INITIAL_TEAM_COUNT = 4;
 
-const INITIAL_TITLE = "Grouper"
+const INITIAL_TITLE = "Grouper";
 
 //
 //
@@ -58,7 +64,7 @@ function App() {
     localStorage.setItem("GROUP_ACTIVE", JSON.stringify(false));
     localStorage.setItem("GROUP_TYPE", "Tsogt");
 
-    localStorage.setItem("TITLE", INITIAL_TITLE)
+    localStorage.setItem("TITLE", INITIAL_TITLE);
 
     window.location.reload(false);
   };
@@ -118,24 +124,22 @@ function App() {
       list: newTeamDataList,
     });
   };
-  // const getCountOfPeopleFromTeam = (data) => {
-  //   let sum = 0;
-  //   const newData = [...data.list];
-  //   newData.map((el) => {
-  //     el.members.map((e) => {
-  //       sum++;
-  //     });
-  //   });
-  //   return sum;
-  // };
+  const addUser = (users, newUser) =>{
+    const newUsers = [...users]
+    newUsers.push(newUser)
+    return newUsers
+  }
 
   useEffect(() => {
-    // initializeData()
+    if (!localStorage.getItem("DATA")) {
+      initializeData();
+    }
+    // initializeData();
     setUserData(JSON.parse(localStorage.getItem("DATA")));
     setTeamData(JSON.parse(localStorage.getItem("TEAM_DATA")));
     setGroupActive(JSON.parse(localStorage.getItem("GROUP_ACTIVE")));
     setGroupType(localStorage.getItem("GROUP_TYPE"));
-    document.title = localStorage.getItem("TITLE")
+    document.title = localStorage.getItem("TITLE");
   }, []);
 
   useEffect(() => {
@@ -190,26 +194,14 @@ function App() {
     setGroupType(response);
   };
   const handleSet = (response) => {
-    if (response === teamData.count) {
-      return;
-    }
-
-    if (Number(response) > userData.length) {
-      setError(
-        `Too many teams! You don't have enough people to go into your teams. The maximum ammount of teams you can have is: ${userData.length}`
-      );
+    if (response === 0) {
       setTeamData({
-        count: userData.length,
-        list: makeEmptyTeam(userData.length),
+        count: 1,
+        list: makeEmptyTeam(1),
       });
       return;
     }
-
-    if (Number(response < 0)) {
-      setError(
-        "Too little teams! You don't have enough teams for your people. The minimum ammount of teams you can have is: 0"
-      );
-      setTeamData({ count: 0, list: makeEmptyTeam(0) });
+    if (response === teamData.count) {
       return;
     }
 
@@ -218,13 +210,13 @@ function App() {
       list: makeEmptyTeam(response),
     });
 
-    if(!groupActive){
+    if (!groupActive) {
       clearTeamStatus(response);
     }
   };
   const handleTeamSwitch = (teamId, personId) => {
-    if(teamId === "none"){
-      return
+    if (teamId === "none") {
+      return;
     }
     setGroupActive(false);
 
@@ -271,135 +263,116 @@ function App() {
 
     setUserData(newChangedUserData);
   };
-  const handleUpdateToGender = (currentGender, personId) =>{
+  const handleUpdateToGender = (currentGender, personId) => {
+    const newPersonData = [...userData];
+    const targetPerson = newPersonData.find((a) => a.name === personId);
 
-    const newPersonData = [...userData]
-    const targetPerson = newPersonData.find((a)=> a.name === personId)
-
-    if(currentGender == "F"){
-      targetPerson.gender = "M"
+    if (currentGender == "F") {
+      targetPerson.gender = "M";
     }
-    if(currentGender == "M"){
-      targetPerson.gender = "F"
-    } 
+    if (currentGender == "M") {
+      targetPerson.gender = "F";
+    }
 
-    console.log("Just set", personId, "from", currentGender, "to", targetPerson.gender)
+    console.log(
+      "Just set",
+      personId,
+      "from",
+      currentGender,
+      "to",
+      targetPerson.gender
+    );
 
-    setUserData(newPersonData)
-
-  }
+    setUserData(newPersonData);
+  };
   const handleUpdateToName = (event, personId) => {
+    const newPersonData = [...userData];
+    const targetPerson = newPersonData.find((a) => a.name === personId);
 
-    const newPersonData = [...userData]
-    const targetPerson = newPersonData.find((a)=> a.name === personId)
-
-    targetPerson.name = event.target.value
-    setUserData(newPersonData)
-  }
-
+    targetPerson.name = event.target.value;
+    setUserData(newPersonData);
+  };
+  const { hovered, ref } = useHover();
 
   return (
-    <div className="flex flex-col w-screen h-screen bg-slate-100 overflow-clip">
-      {error && (
-        <Error
-          handleSubmit={() => {
-            setError();
+    <div className="flex flex-row w-screen h-screen justify-center ">
+      <div className="w-full h-fit max-w-[1175px] flex flex-row justify-between pt-5">
+        <People
+          userData={userData}
+          handleChange={handleSliderChange}
+          handleGenderChange={handleUpdateToGender}
+          teamData = {teamData}
+          handleTeamChange = {handleTeamSwitch}
+          addUser = {(response)=>{
+            setUserData(addUser(userData, response))
           }}
-        >
-          {error}
-        </Error>
-      )}
-      <div className="flex flex-row justify-center mt-12">
-        <div className="flex flex-col ">
-          <div className="flex flex-row h-[30px] w-[420px] items-center justify-between mx-12 px-12">
-            <div className="flex flex-row">
-              Group:
-              <div
-                onClick={() => {
-                  if (groupActive) {
-                    setGroupActive(false);
-                  } else {
-                    setGroupActive(true);
-                  }
-                }}
-                className={` duration-300 cursor-pointer rounded-md mr-8 px-2 py-1 flex items-center justify-center  mx-2 text-[14px] ${
-                  groupActive
-                    ? " bg-green-500 hover:bg-green-400"
-                    : "bg-red-500 hover:bg-red-400"
-                }`}
-              >
-                {groupActive ? "Active" : "NotActive"}
-              </div>
-            </div>
-            <div className="flex flex-row items-center">
-              {groupType !== "NOTINITIALIZEDYET" && (
-                <Switch
-                  initialValue={groupType}
-                  handleChange={handleSwitchChange}
-                />
-              )}
+        />
 
-              <p className="ml-3 min-w-[70px]">{groupType}</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col border-[2px] border-black w-fit p-12 m-12 rounded-lg h-[75vh] overflow-y-scroll">
-            <p className=" my-2">Total: {userData.length}</p>
-            {userData.map((el, i) => {
-              return (
-                <Person
-                  teams={teamData}
-                  data={el}
-                  handleChange={handleSliderChange}
-                  handleChangeTeam={handleTeamSwitch}
-                  handleGengerChange={handleUpdateToGender}
-                  handleNameChange={handleUpdateToName}
-                  active = {groupActive}
-                />
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="flex flex-col">
-          <div className=" h-[30px] flex flex-row justify-between w-[800px] mx-12 px-12">
-            <div className="flex flex-row items">
-              <NumberInput
-                initialValue={teamData.count}
-                handleSubmit={handleSet}
-              />
-              <p className="h-full flex items-center justify-center ml-4 border-b-2 border-black min-w-[20px]">
-                {teamData.count}
-              </p>
-            </div>
-
-            <div className="flex flex-row">
-              <input placeholder="Edit Tile" type="text" id ="InputForChangingTitle" className="pl-2 rounded-md" />
-              <div onClick = {()=>{
-                document.title = (document.getElementById("InputForChangingTitle").value)
-                localStorage.setItem("TITLE", document.title)
-              }} className="rounded-md cursor-pointer hover:bg-green-400 duration-300 mx-1 bg-green-500 px-2 py-1 h-full flex justify-center items-center text-[14px]">SET</div>
-            </div>
-
-            <button
-              className="text-[14px] bg-red-500 hover:bg-red-600 duration-300  py-1 px-2 text-white rounded-md"
-              onClick={() => {
-                initializeData();
-              }}
-            >
-              RESET
-            </button>
-          </div>
-
-          <div className=" w-[800px] h-[75vh] p-12 m-12 rounded-lg border-[2px] border-black flex flex-wrap overflow-y-scroll">
+        <div className="flex flex-col w-[65%]">
+          <Configurations
+            handleChange={handleSwitchChange}
+            userData={userData}
+            handleTeamCountChange={handleSet}
+            active={groupActive}
+            setActive={setGroupActive}
+            handleReset = {initializeData}
+            groupType = {groupType}
+          />
+          <Card className="mt-5">
+            <Title order={2}>Teams</Title>
+          </Card>
+          <div className="w-full flex flex-wrap">
             {teamData.list &&
-              teamData.list.map((el, i) => {
+              teamData.list.map((el) => {
                 return (
-                  <Team
-                    userData={userData}
-                    data={el}
-                    handleDelete={handleKickFromTeam}
-                  />
+                  <Card
+                    withBorder
+                    radius={"md"}
+                    className=" shadow-md w-[240px] min-h-[240px] mr-3 mb-3"
+                  >
+                    <div className="flex flex-row justify-between mb-3">
+                      <Title order={4}>Team #{el.id}</Title>
+                      <Title order={4}>
+                        :
+                        {el.members.reduce(
+                          (sum, el) =>
+                            (sum =
+                              sum +
+                              Number(
+                                userData.find((a) => a.name === el).skill
+                              )),
+                          0
+                        )}
+                      </Title>
+                    </div>
+                    <div className="flex flex-col">
+                      {el.members &&
+                        el.members.map((member) => {
+                          const targetPerson = userData.find(
+                            (a) => a.name === member
+                          );
+                          return (
+                            <div className="flex flex-row w-full justify-between my-1">
+                              <Title order={5} className=" font-normal">
+                                {member}
+                              </Title>
+                              <div>
+                                <Badge
+                                  onClick={()=>{handleKickFromTeam(member)}}
+                                  className=" cursor-pointer"
+                                  variant={"dot"}
+                                  color={
+                                    targetPerson.gender == "F" ? "red" : "blue"
+                                  }
+                                >
+                                  {targetPerson.skill}
+                                </Badge>
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </Card>
                 );
               })}
           </div>

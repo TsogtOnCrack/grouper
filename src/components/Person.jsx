@@ -12,7 +12,7 @@ export const Person = ({
   active, 
 }) => {
   const [sliderValue, setSliderValue] = useState(data.skill);
-  const [pickerActive, setPickerActive] = useState(!active);
+  const [pickerActive, setPickerActive] = useState(false);
 
 
   return (
