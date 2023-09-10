@@ -1,4 +1,4 @@
-import { SegmentedControl, Title, Card, Slider, Button } from "@mantine/core";
+import { SegmentedControl, TextInput, Title, Card, Slider, Button } from "@mantine/core";
 import { useEffect, useState } from "react";
 
 import { useToggle } from "@mantine/hooks";
@@ -11,7 +11,11 @@ export const Configurations = ({
   setActive,
   handleReset,
   groupType,
+  setTitle,
+  title
 }) => {
+
+  console.log("========>>>>>>>",title)
   const [value, setValue] = useState();
 
   const [sliderValue, setSliderValue] = useState(
@@ -31,9 +35,12 @@ export const Configurations = ({
         <Title order={2} className=" hidden computer:block">
           Configurations for
         </Title>
-        <Title order={2} className=" uppercase">
-          :Project Name
-        </Title>
+
+        {title && <div className="flex text-black text-[24px] font-bold items-center">: <input type="text" className=" ml-1 w-fit min-w-[200px] outline-none font-bold text-black text-[24px] placeholder:font-bold placeholder:text-black placeholder:text-[24px]" placeholder={title} onChange={(e)=>{
+          setTitle(e.target.value)
+        }} /></div>}
+
+
       </div>
       <div className="flex flex-col items-center computer:flex-row justify-between">
         <div className="flex flex-col">

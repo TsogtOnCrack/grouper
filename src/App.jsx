@@ -36,7 +36,7 @@ const DATA = [
 ];
 const INITIAL_TEAM_COUNT = 4;
 
-const INITIAL_TITLE = "Grouper";
+const INITIAL_TITLE = "PROJECT NAME";
 
 //
 //
@@ -47,7 +47,7 @@ function App() {
   const [teamData, setTeamData] = useState({});
   const [groupType, setGroupType] = useState("NOTINITIALIZEDYET");
   const [groupActive, setGroupActive] = useState("NOTINITIALIZEDYET");
-  const [error, setError] = useState();
+  const [title, setTitle] = useState()
 
   const initializeData = () => {
     localStorage.clear();
@@ -133,8 +133,16 @@ function App() {
     setTeamData(JSON.parse(localStorage.getItem("TEAM_DATA")));
     setGroupActive(JSON.parse(localStorage.getItem("GROUP_ACTIVE")));
     setGroupType(localStorage.getItem("GROUP_TYPE"));
-    document.title = localStorage.getItem("TITLE");
+    setTitle(localStorage.getItem("TITLE"))
   }, []);
+
+  useEffect(()=>{
+    if(title){
+      localStorage.setItem("TITLE", title)
+    }
+    
+    window.document.title = title
+  },[title])
 
   useEffect(() => {
     console.log("got here", userData);
@@ -296,19 +304,19 @@ function App() {
 
     setUserData(newPersonData);
   };
-  const handleUpdateToName = (event, personId) => {
-    const newPersonData = [...userData];
-    const targetPerson = newPersonData.find((a) => a.name === personId);
-    targetPerson.name = event.target.value;
-    setUserData(newPersonData);
-  };
+  const handleTitleChange = (newTitle) =>{
+
+    setTitle(newTitle)
+  
+  }
+
+
   const { hovered, ref } = useHover();
 
   return (
     <div className="flex flex-row w-screen h-screen justify-center ">
       <div className=" computer:hidden tablet:items-start items-center flex flex-col tablet:flex-row h-fit pt-12 min-h-screen pb-5 justify-center px-4">
         <div className="flex flex-col items-center">
-
           <Configurations
             handleChange={handleSwitchChange}
             userData={userData}
@@ -317,6 +325,8 @@ function App() {
             setActive={setGroupActive}
             handleReset={initializeData}
             groupType={groupType}
+            setTitle = {handleTitleChange}
+            title={title}
           />
           <div className="mt-4 h-full">
             <People
@@ -359,6 +369,8 @@ function App() {
             setActive={setGroupActive}
             handleReset={initializeData}
             groupType={groupType}
+            title={title}
+            setTitle = {handleTitleChange}
           />
           <Teams
             userData={userData}
