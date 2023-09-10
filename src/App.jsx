@@ -34,7 +34,7 @@ const DATA = [
   // { name: "Person3", skill: 42, team: -1, gender: "F" },
   // { name: "Person4", skill: 42, team: -1, gender: "F" },
 ];
-const INITIAL_TEAM_COUNT = 0;
+const INITIAL_TEAM_COUNT = 1;
 
 const INITIAL_TITLE = "PROJECT NAME";
 

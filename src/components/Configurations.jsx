@@ -14,8 +14,6 @@ export const Configurations = ({
   setTitle,
   title
 }) => {
-
-  console.log("========>>>>>>>",title)
   const [value, setValue] = useState();
 
   const [sliderValue, setSliderValue] = useState(
