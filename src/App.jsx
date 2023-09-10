@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Person } from "./components/Person";
 import { Team } from "./components/Team";
 import { Switch } from "./components/Switch";
+import { Teams } from "./components/Teams";
 import { NumberInput } from "./components/NumberInput";
 import { tsogtAlgorithm } from "./utils/tsogtAlgorith";
 import { greedyAlgorithm } from "./utils/greedyAlgorithm";
@@ -32,7 +33,12 @@ const DATA = [
   { name: "Tsogt2", skill: 69, team: -1, gender: "M" },
   { name: "Tsogt3", skill: 42, team: -1, gender: "F" },
   { name: "Tsogt4", skill: 42, team: -1, gender: "F" },
-  
+  { name: "Tsogt6", skill: 69, team: -1, gender: "M" },
+  { name: "Tsogt7", skill: 42, team: -1, gender: "F" },
+  { name: "Tsogt8", skill: 42, team: -1, gender: "F" },
+  { name: "Tsogt9", skill: 69, team: -1, gender: "M" },
+  { name: "Tsogt10", skill: 42, team: -1, gender: "F" },
+  { name: "Tsogt12", skill: 42, team: -1, gender: "F" },
 ];
 const INITIAL_TEAM_COUNT = 4;
 
@@ -63,7 +69,6 @@ function App() {
     setTeamData({ count: INITIAL_TEAM_COUNT, list: [...newTeamData] });
     localStorage.setItem("GROUP_ACTIVE", JSON.stringify(false));
     localStorage.setItem("GROUP_TYPE", "Tsogt");
-
     localStorage.setItem("TITLE", INITIAL_TITLE);
 
     window.location.reload(false);
@@ -124,17 +129,12 @@ function App() {
       list: newTeamDataList,
     });
   };
-  const addUser = (users, newUser) =>{
-    const newUsers = [...users]
-    newUsers.push(newUser)
-    return newUsers
-  }
 
   useEffect(() => {
     if (!localStorage.getItem("DATA")) {
       initializeData();
     }
-    // initializeData();
+
     setUserData(JSON.parse(localStorage.getItem("DATA")));
     setTeamData(JSON.parse(localStorage.getItem("TEAM_DATA")));
     setGroupActive(JSON.parse(localStorage.getItem("GROUP_ACTIVE")));
@@ -143,12 +143,16 @@ function App() {
   }, []);
 
   useEffect(() => {
+    console.log("got here", userData);
     if (userData[0] !== undefined) {
       localStorage.setItem("DATA", JSON.stringify(userData));
     } else {
       console.log("ERROR: empty data");
     }
 
+    if (userData[0]) {
+      localStorage.setItem("DATA", JSON.stringify(userData));
+    }
     if (teamData.list && groupActive) {
       applyAlgorithmToTeams(groupType, teamData.count, userData);
     }
@@ -239,6 +243,19 @@ function App() {
 
     setUserData(newUserData);
   };
+  const handleAddUser = (n, s, g) => {
+    var newUserData = [...userData];
+    newUserData = [{ name: n, skill: s, team: -1, gender: g }, ...newUserData];
+    setUserData(newUserData);
+  };
+  const handleDeleteUser = (n) => {
+    const newUserData = [...userData];
+    const targetPerson = newUserData.find((person) => person.name == n);
+    const index = newUserData.indexOf(targetPerson);
+    newUserData.splice(index, 1);
+    console.log(newUserData);
+    setUserData([...newUserData]);
+  };
   const handleKickFromTeam = (id) => {
     setGroupActive(false);
 
@@ -288,7 +305,6 @@ function App() {
   const handleUpdateToName = (event, personId) => {
     const newPersonData = [...userData];
     const targetPerson = newPersonData.find((a) => a.name === personId);
-
     targetPerson.name = event.target.value;
     setUserData(newPersonData);
   };
@@ -296,86 +312,65 @@ function App() {
 
   return (
     <div className="flex flex-row w-screen h-screen justify-center ">
-      <div className="w-full h-fit max-w-[1175px] flex flex-row justify-between pt-5">
-        <People
-          userData={userData}
-          handleChange={handleSliderChange}
-          handleGenderChange={handleUpdateToGender}
-          teamData = {teamData}
-          handleTeamChange = {handleTeamSwitch}
-          addUser = {(response)=>{
-            setUserData(addUser(userData, response))
-          }}
-        />
+      <div className=" computer:hidden tablet:items-start items-center flex flex-col tablet:flex-row h-fit pt-12 min-h-screen pb-5 justify-center px-4">
+        <div className="flex flex-col items-center">
 
-        <div className="flex flex-col w-[65%]">
           <Configurations
             handleChange={handleSwitchChange}
             userData={userData}
             handleTeamCountChange={handleSet}
             active={groupActive}
             setActive={setGroupActive}
-            handleReset = {initializeData}
-            groupType = {groupType}
+            handleReset={initializeData}
+            groupType={groupType}
           />
-          <Card className="mt-5">
-            <Title order={2}>Teams</Title>
-          </Card>
-          <div className="w-full flex flex-wrap">
-            {teamData.list &&
-              teamData.list.map((el) => {
-                return (
-                  <Card
-                    withBorder
-                    radius={"md"}
-                    className=" shadow-md w-[240px] min-h-[240px] mr-3 mb-3"
-                  >
-                    <div className="flex flex-row justify-between mb-3">
-                      <Title order={4}>Team #{el.id}</Title>
-                      <Title order={4}>
-                        :
-                        {el.members.reduce(
-                          (sum, el) =>
-                            (sum =
-                              sum +
-                              Number(
-                                userData.find((a) => a.name === el).skill
-                              )),
-                          0
-                        )}
-                      </Title>
-                    </div>
-                    <div className="flex flex-col">
-                      {el.members &&
-                        el.members.map((member) => {
-                          const targetPerson = userData.find(
-                            (a) => a.name === member
-                          );
-                          return (
-                            <div className="flex flex-row w-full justify-between my-1">
-                              <Title order={5} className=" font-normal">
-                                {member}
-                              </Title>
-                              <div>
-                                <Badge
-                                  onClick={()=>{handleKickFromTeam(member)}}
-                                  className=" cursor-pointer"
-                                  variant={"dot"}
-                                  color={
-                                    targetPerson.gender == "F" ? "red" : "blue"
-                                  }
-                                >
-                                  {targetPerson.skill}
-                                </Badge>
-                              </div>
-                            </div>
-                          );
-                        })}
-                    </div>
-                  </Card>
-                );
-              })}
+          <div className="mt-4 h-full">
+            <People
+              userData={userData}
+              handleChange={handleSliderChange}
+              handleGenderChange={handleUpdateToGender}
+              teamData={teamData}
+              handleTeamChange={handleTeamSwitch}
+              addUser={handleAddUser}
+              deleteUser={handleDeleteUser}
+            />
           </div>
+        </div>
+        <div className="tablet:ml-6">
+          <Teams
+            userData={userData}
+            teamData={teamData}
+            kickFromTeam={handleKickFromTeam}
+          />
+        </div>
+      </div>
+
+      <div className="computer:flex hidden w-full h-fit max-w-[1175px] flex-col computer:flex-row justify-between pt-5">
+        <People
+          userData={userData}
+          handleChange={handleSliderChange}
+          handleGenderChange={handleUpdateToGender}
+          teamData={teamData}
+          handleTeamChange={handleTeamSwitch}
+          addUser={handleAddUser}
+          deleteUser={handleDeleteUser}
+        />
+
+        <div className=" visibleflex flex-col w-[65%]">
+          <Configurations
+            handleChange={handleSwitchChange}
+            userData={userData}
+            handleTeamCountChange={handleSet}
+            active={groupActive}
+            setActive={setGroupActive}
+            handleReset={initializeData}
+            groupType={groupType}
+          />
+          <Teams
+            userData={userData}
+            teamData={teamData}
+            kickFromTeam={handleKickFromTeam}
+          />
         </div>
       </div>
     </div>
