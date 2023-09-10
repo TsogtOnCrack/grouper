@@ -36,7 +36,7 @@ export const Configurations = ({
           Configurations for
         </Title>
 
-        {title && <div className="flex text-black text-[24px] font-bold items-center">: <input type="text" className=" ml-1 w-fit min-w-[200px] outline-none font-bold text-black text-[24px] placeholder:font-bold placeholder:text-black placeholder:text-[24px]" placeholder={title} onChange={(e)=>{
+        {<div className="flex text-black text-[24px] font-bold items-center">: <input type="text" className=" ml-1 w-fit min-w-[200px] outline-none font-bold text-black text-[24px] placeholder:font-bold placeholder:text-black placeholder:text-[24px]" value={title} onChange={(e)=>{
           setTitle(e.target.value)
         }} /></div>}
 
