@@ -29,16 +29,10 @@ import { useHover } from "@mantine/hooks";
 //
 
 const DATA = [
-  { name: "Tsogt", skill: 42, team: -1, gender: "F" },
-  { name: "Tsogt2", skill: 69, team: -1, gender: "M" },
-  { name: "Tsogt3", skill: 42, team: -1, gender: "F" },
-  { name: "Tsogt4", skill: 42, team: -1, gender: "F" },
-  { name: "Tsogt6", skill: 69, team: -1, gender: "M" },
-  { name: "Tsogt7", skill: 42, team: -1, gender: "F" },
-  { name: "Tsogt8", skill: 42, team: -1, gender: "F" },
-  { name: "Tsogt9", skill: 69, team: -1, gender: "M" },
-  { name: "Tsogt10", skill: 42, team: -1, gender: "F" },
-  { name: "Tsogt12", skill: 42, team: -1, gender: "F" },
+  { name: "Person1", skill: 42, team: -1, gender: "F" },
+  { name: "Person2", skill: 69, team: -1, gender: "M" },
+  { name: "Person3", skill: 42, team: -1, gender: "F" },
+  { name: "Person4", skill: 42, team: -1, gender: "F" },
 ];
 const INITIAL_TEAM_COUNT = 4;
 
