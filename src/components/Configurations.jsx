@@ -25,7 +25,7 @@ export const Configurations = ({
     <Card
       withBorder
       radius={"md"}
-      className=" shadow-md h-fit min-h-[325px] computer:h-[170px] flex flex-col w-[345px] computer:w-full justify-between computer:py-6 py-10"
+      className=" shadow-md h-fit min-h-[325px] computer:min-h-[170px] computer:h-[170px] flex flex-col w-[345px] computer:w-full justify-between computer:py-6 py-10"
     >
       <div className="flex flex-row computer:justify-between computer:mb-0 mb-6 justify-center">
         <Title order={2} className=" hidden computer:block">
